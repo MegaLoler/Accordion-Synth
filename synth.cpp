@@ -20,7 +20,7 @@ void Synth::note_on (int note, double velocity) {
     Osc osc (note, rate);
     osc.freq = 440 * pow (2.0, (note - 69) / 12.0);
     osc.amp = velocity;
-    osc.pan = 0;
+    osc.pan = note / 127.0 * 2 - 1;
     oscs.push_back (osc);
 }
 
@@ -36,8 +36,9 @@ void Synth::run (double *samples) {
     double r = 0;
     for (std::vector<Osc>::iterator it = oscs.begin() ; it != oscs.end(); it++) {
         l = r = it->run ();
-        samples[0] += l;
-        samples[1] += r;
+        double pan = (it->pan + 1) / 4;
+        samples[0] += cos (it->pan * M_PI) * l;
+        samples[1] += sin (it->pan * M_PI) * r;
     }
 }
 
