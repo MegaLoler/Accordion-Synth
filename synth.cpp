@@ -1,10 +1,11 @@
 #include <iostream>
+#include <cmath>
 #include <stdint.h>
+#include <algorithm>
 #include "synth.h"
 
 Synth::Synth () {
-    osc = 0;
-    freq = 440;
+
 }
 
 Synth::~Synth () {
@@ -16,11 +17,28 @@ void Synth::set_rate (double rate) {
 }
 
 void Synth::note_on (int note, double velocity) {
-
+    Osc osc (note, rate);
+    osc.freq = 440 * pow (2.0, (note - 69) / 12.0);
+    osc.amp = velocity;
+    osc.pan = 0;
+    oscs.push_back (osc);
 }
 
 void Synth::note_off (int note) {
+    oscs.erase (std::remove_if (oscs.begin(), oscs.end(),
+                [=] (Osc const &osc) { return osc.id == note; })
+            , oscs.end());
+}
 
+void Synth::run (double *samples) {
+    samples[0] = samples[1] = 0;
+    double l = 0;
+    double r = 0;
+    for (std::vector<Osc>::iterator it = oscs.begin() ; it != oscs.end(); it++) {
+        l = r = it->run ();
+        samples[0] += l;
+        samples[1] += r;
+    }
 }
 
 void Synth::midi (uint8_t *data) {
@@ -77,12 +95,4 @@ void Synth::midi (uint8_t *data) {
 
     }
 
-}
-
-void Synth::run (double *samples) {
-    osc += freq / rate;
-    if (osc > 1)
-        osc -= 2;
-    double sample = osc;
-    samples[0] = samples[1] = sample;
 }

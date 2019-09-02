@@ -1,8 +1,13 @@
+#pragma once
+
+#include <vector>
+#include "osc.h"
+
 class Synth {
     private:
-        double rate;
-        double osc;
-        double freq;
+        double rate = 0;
+        double pressure = 0;
+        std::vector<Osc> oscs;    // currently playing oscillators
 
     public:
         Synth ();
