@@ -10,14 +10,12 @@ int midi_channel = -1;      // -1 = omni
 unsigned int rate = 44100;  // sampling rate
 unsigned int frames = 256;  // audio buffer
 
-using namespace std;
-
-void exit_error (string message) {
-    cerr << message << endl;
+void exit_error (std::string message) {
+    std::cerr << message << std::endl;
     exit (EXIT_FAILURE);
 }
 
-void process_midi (double dt, vector<unsigned char> *message, void *user_data) {
+void process_midi (double dt, std::vector<unsigned char> *message, void *user_data) {
     // convert this vector to an array
     int num_bytes = message->size ();
     uint8_t *data = new uint8_t[num_bytes];
@@ -42,7 +40,7 @@ void process_midi (double dt, vector<unsigned char> *message, void *user_data) {
 void setup_midi () {
     // setup midi input
     RtMidiIn *midi_in = new RtMidiIn ();
-    vector<unsigned char> message;
+    std::vector<unsigned char> message;
 
     // check midi in ports
     unsigned int num_ports = midi_in->getPortCount ();
