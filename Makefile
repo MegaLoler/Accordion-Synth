@@ -1,5 +1,6 @@
 synth: build *.h *.cpp
-	g++ -O3 -lrtmidi -lrtaudio *.cpp -o build/synth
+	#g++ -O3 -lrtmidi -lrtaudio *.cpp -o build/synth
+	g++ -Og -g -lrtmidi -lrtaudio *.cpp -o build/synth
 
 build:
 	mkdir build

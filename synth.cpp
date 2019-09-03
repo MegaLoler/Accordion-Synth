@@ -5,7 +5,9 @@
 #include "synth.h"
 
 Synth::Synth () {
-
+    for (int i = 0; i < 128; i++) {
+        oscs[i].pan = i / 127.0 / 2 * M_PI;
+    }
 }
 
 Synth::~Synth () {
@@ -14,31 +16,38 @@ Synth::~Synth () {
 
 void Synth::set_rate (double rate) {
     this->rate = rate;
+    for (int i = 0; i < 128; i++) {
+        oscs[i].rate = rate;
+    }
+}
+
+void Synth::set_pressure (double pressure) {
+    this->pressure = pressure;
+    for (int i = 0; i < 128; i++) {
+        oscs[i].amp = pressure;
+    }
 }
 
 void Synth::note_on (int note, double velocity) {
-    Osc osc (note, rate);
+    Osc &osc = oscs[note];
+    osc.on = true;
     osc.freq = 440 * pow (2.0, (note - 69) / 12.0);
-    osc.amp = velocity;
-    osc.pan = note / 127.0 * 2 - 1;
-    oscs.push_back (osc);
 }
 
 void Synth::note_off (int note) {
-    oscs.erase (std::remove_if (oscs.begin(), oscs.end(),
-                [=] (Osc const &osc) { return osc.id == note; })
-            , oscs.end());
+    oscs[note].on = false;
 }
 
 void Synth::run (double *samples) {
     samples[0] = samples[1] = 0;
     double l = 0;
     double r = 0;
-    for (std::vector<Osc>::iterator it = oscs.begin() ; it != oscs.end(); it++) {
-        l = r = it->run ();
-        double pan = (it->pan + 1) / 4;
-        samples[0] += cos (it->pan * M_PI) * l;
-        samples[1] += sin (it->pan * M_PI) * r;
+    for (int i = 0; i < 128; i++) {
+        if (oscs[i].on) {
+            l = r = oscs[i].run ();
+            samples[0] += cos (oscs[i].pan) * l * amp;
+            samples[1] += sin (oscs[i].pan) * r * amp;
+        }
     }
 }
 
@@ -59,6 +68,10 @@ void Synth::midi (uint8_t *data) {
 
         std::cout << "Received midi controller event: 0x" << std::hex << (int) id
             << " 0x" << std::hex << (int) value << std::endl;
+
+        if (id == 0x15) {
+            set_pressure (value / 127.0);
+        }
 
     } else if (type == 0x80) {
 

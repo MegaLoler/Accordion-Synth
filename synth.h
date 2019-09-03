@@ -1,19 +1,20 @@
 #pragma once
 
-#include <vector>
 #include "osc.h"
 
 class Synth {
     private:
         double rate = 0;
         double pressure = 0;
-        std::vector<Osc> oscs;    // currently playing oscillators
+        double amp = 0.5;
+        Osc oscs[128];    // currently playing oscillators
 
     public:
         Synth ();
         ~Synth ();
 
         void set_rate (double rate);
+        void set_pressure (double pressure);
         void note_on (int note, double velocity);
         void note_off (int note);
         void midi (uint8_t *data);
