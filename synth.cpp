@@ -14,10 +14,18 @@ Synth::Synth () {
         oscs3[i].freq = 440 * pow (2.0, ((i + detune) - 69) / 12.0);
         target_pressures[i] = 0;
     }
+
+    delay_r = new double[num_delays];
+    delay_l = new double[num_delays];
+    delay_r_ = new double[num_delays];
+    delay_l_ = new double[num_delays];
 }
 
 Synth::~Synth () {
-
+    delete delay_r;
+    delete delay_l;
+    delete delay_r_;
+    delete delay_l_;
 }
 
 void Synth::set_rate (double rate) {
@@ -90,9 +98,30 @@ void Synth::run (double *samples) {
         }
     }
 
+    // delay lines
+    for (int i = 0; i < num_delays - 1; i++) {
+        delay_l_[i] = delay_l[i + 1];
+        delay_r_[i + 1] = delay_r[i];
+    }
+    delay_r_[0] = delay_l[0] * reflection;
+    delay_l_[num_delays - 1] = delay_r[num_delays - 1] * reflection;
+
+    delay_r_[0] = (delay_r_[0] * reflection_stiffness + delay_r[0]) / (1 + reflection_stiffness);
+    delay_l_[num_delays - 1] = (delay_l_[num_delays - 1] * reflection_stiffness + delay_l[num_delays - 1]) / (1 + reflection_stiffness);
+
+
+    double *tmp_r = delay_r;
+    double *tmp_l = delay_l;
+    delay_r = delay_r_;
+    delay_l = delay_l_;
+    delay_r_ = tmp_r;
+    delay_l_ = tmp_l;
+    delay_r[room_center] += r;
+    delay_l[room_center] += l;
+
     // low pass filter
-    low_pass_left  = (l  + low_pass_left  * beta) / (1 + beta);
-    low_pass_right = (r + low_pass_right * beta) / (1 + beta);
+    low_pass_left  = (delay_r[room_center] * wet + l * dry + low_pass_left  * beta) / (1 + beta);
+    low_pass_right = (delay_l[room_center] * wet + r * dry + low_pass_right * beta) / (1 + beta);
     samples[0] = low_pass_left;
     samples[1] = low_pass_right;
 }

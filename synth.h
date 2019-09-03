@@ -12,6 +12,21 @@ class Synth {
         double weights[128];
         double weight_smoothing = 0.99;
 
+        // delay line reverb
+        // TODO: make this rate independant
+        const static int num_delays = 750;
+        const static int room_center = 80;
+        const double reflection = 0.8;
+        const double reflection_stiffness = 0.1;
+        double *delay_l;
+        double *delay_r;
+        double *delay_l_;
+        double *delay_r_;
+        double wet = 0.70;
+        double dry = 0.30;
+        //double wet = 0.00;
+        //double dry = 1.00;
+
         // pressure range
         //double max = 1.09;
         //double min = 0.88;
