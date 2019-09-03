@@ -27,9 +27,11 @@ class Synth {
         //double wet = 0.00;
         //double dry = 1.00;
 
+        // accordion
         double octave_multiplier_1 = 1;
         double octave_multiplier_2 = 0.5;
         double octave_multiplier_3 = 1;
+        // melodica
         //double octave_multiplier_1 = 1;
         //double octave_multiplier_2 = 0;
         //double octave_multiplier_3 = 0;
