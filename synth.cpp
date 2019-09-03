@@ -52,20 +52,23 @@ void Synth::note_on (int note, double velocity) {
     oscs[note].start ();
     oscs2[note].start ();
     oscs3[note].start ();
-    target_pressures[note] = min + (max - min) * velocity;
-    weights[note] = note * note;
 
-    // calculate new target pressure
-    double sum = 0;
-    double total = 0;
-    for (int i = 0; i < 128; i++) {
-        double pressure = target_pressures[i] * weights[i];
-        if (pressure) {
-            sum += pressure;
-            total += weights[i];
+    if (pressure_velocity) {
+        target_pressures[note] = min + (max - min) * velocity;
+        weights[note] = note * note;
+
+        // calculate new target pressure
+        double sum = 0;
+        double total = 0;
+        for (int i = 0; i < 128; i++) {
+            double pressure = target_pressures[i] * weights[i];
+            if (pressure) {
+                sum += pressure;
+                total += weights[i];
+            }
         }
+        target_pressure = sum / total;
     }
-    target_pressure = sum / total;
 }
 
 void Synth::note_off (int note) {
@@ -118,10 +121,14 @@ void Synth::run (double *samples) {
     delay_l_ = tmp_l;
     delay_r[room_center] += r;
     delay_l[room_center] += l;
+    delay_r[0] = fmax (-5, fmin (5, delay_r[0]));
+    delay_l[num_delays - 1] = fmax (-5, fmin (5, delay_l[num_delays - 1]));
 
     // low pass filter
     low_pass_left  = (delay_r[room_center] * wet + l * dry + low_pass_left  * beta) / (1 + beta);
     low_pass_right = (delay_l[room_center] * wet + r * dry + low_pass_right * beta) / (1 + beta);
+    low_pass_left = fmax (-1, fmin (1, low_pass_left));
+    low_pass_right = fmax (-1, fmin (1, low_pass_right));
     samples[0] = low_pass_left;
     samples[1] = low_pass_right;
 }
@@ -144,7 +151,7 @@ void Synth::midi (uint8_t *data) {
         std::cout << "Received midi controller event: 0x" << std::hex << (int) id
             << " 0x" << std::hex << (int) value << std::endl;
 
-        if (id == 0x15) {
+        if (id == 0x15 || id == 0x5d) {
             target_pressure = min + (max - min) * (value / 127.0);
         }
 

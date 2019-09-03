@@ -27,9 +27,14 @@ class Synth {
         //double wet = 0.00;
         //double dry = 1.00;
 
+        //double octave_multiplier_1 = 1;
+        //double octave_multiplier_2 = 0.5;
+        //double octave_multiplier_3 = 1;
         double octave_multiplier_1 = 1;
-        double octave_multiplier_2 = 0.5;
-        double octave_multiplier_3 = 1;
+        double octave_multiplier_2 = 0;
+        double octave_multiplier_3 = 0;
+
+        bool pressure_velocity = false; // whether velocity controls pressure
 
         // pressure range
         //double max = 1.09;
