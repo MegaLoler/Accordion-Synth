@@ -26,7 +26,7 @@ class Synth {
         double pan_sep = 0.025;
 
         // low pass filter
-        double beta = 1;
+        double beta = 0;//2;
         double low_pass_left = 0;
         double low_pass_right = 0;
 

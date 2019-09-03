@@ -69,9 +69,10 @@ void Synth::note_off (int note) {
 }
 
 void Synth::run (double *samples) {
-    if (clock++ % control_rate_division == 0) {
-        set_pressure (pressure + (target_pressure - pressure) / pressure_smoothing);
-    }
+    set_pressure (pressure + (target_pressure - pressure) / (pressure_smoothing * control_rate_division));
+    //if (clock++ % control_rate_division == 0) {
+    //    set_pressure (pressure + (target_pressure - pressure) / pressure_smoothing);
+    //}
 
     double l = 0;
     double r = 0;
