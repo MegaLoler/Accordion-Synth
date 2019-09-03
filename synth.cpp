@@ -6,8 +6,10 @@
 
 Synth::Synth () {
     for (int i = 0; i < 128; i++) {
-        oscs[i].pan = i / 127.0 / 2 * M_PI;
+        oscs[i].pan = (i / 127.0 - pan_sep) / 2 * M_PI;
         oscs[i].freq = 440 * pow (2.0, (i - 69) / 12.0);
+        oscs2[i].pan = (i / 127.0 + pan_sep) / 2 * M_PI;
+        oscs2[i].freq = 440 * pow (2.0, ((i + detune) - 69) / 12.0) / 2;
         target_pressures[i] = 0;
     }
 }
@@ -20,6 +22,7 @@ void Synth::set_rate (double rate) {
     this->rate = rate;
     for (int i = 0; i < 128; i++) {
         oscs[i].rate = rate;
+        oscs2[i].rate = rate;
     }
 }
 
@@ -28,12 +31,14 @@ void Synth::set_pressure (double pressure) {
 
     for (int i = 0; i < 128; i++) {
         oscs[i].amp = pressure;
+        oscs2[i].amp = pressure;
         weights[i] *= weight_smoothing;
     }
 }
 
 void Synth::note_on (int note, double velocity) {
     oscs[note].start ();
+    oscs2[note].start ();
     target_pressures[note] = min + (max - min) * velocity;
     weights[note] = note * note;
 
@@ -52,6 +57,7 @@ void Synth::note_on (int note, double velocity) {
 
 void Synth::note_off (int note) {
     oscs[note].stop ();
+    oscs2[note].stop ();
     target_pressures[note] = 0;
     weights[note] = 0;
 }
@@ -68,6 +74,9 @@ void Synth::run (double *samples) {
             double sample = oscs[i].run ();
             l += cos (oscs[i].pan) * sample * amp;
             r += sin (oscs[i].pan) * sample * amp;
+            sample = oscs2[i].run ();
+            l += cos (oscs2[i].pan) * sample * amp;
+            r += sin (oscs2[i].pan) * sample * amp;
         }
     }
 
