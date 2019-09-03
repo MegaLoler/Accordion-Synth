@@ -17,7 +17,7 @@ double Osc::run () {
     
     double side = 0;
     // crude integration
-    const int res = 5;
+    const int res = 10;
     for (int i = 0; i < res; i++) {
         double j = i / res;
         double m = j * j * (6 - 4 * j + j * j) / 24.0;

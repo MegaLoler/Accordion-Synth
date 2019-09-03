@@ -1,15 +1,6 @@
-# Cheapo free reed synth
-
-its not even good or anything
+# accordion
 
 
 u need RTMidi and RTAudio
 
-
-## todo
-
-i want to use it as a template for other synths n stuff
-
-- parameter system
-- easy vst building
-- prob a subtle compressor..
+listen 2 `demo.mp3`

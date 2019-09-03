@@ -20,8 +20,9 @@ class Synth {
 
         double amp = 1;
         Osc oscs[128];    // currently playing oscillators
-        Osc oscs2[128];   // second pair
-        double detune = 0.1;    // semitones
+        Osc oscs2[128];   // second set
+        Osc oscs3[128];   // third set
+        double detune = 0.025;    // semitones
         double pan_sep = 0.025;
 
         // low pass filter
