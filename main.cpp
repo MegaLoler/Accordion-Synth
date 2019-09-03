@@ -8,7 +8,7 @@
 Synth *synth;
 int midi_channel = -1;      // -1 = omni
 unsigned int rate = 48000;  // sampling rate
-unsigned int frames = 256;   // audio buffer
+unsigned int frames = 512;  // audio buffer
 
 void exit_error (std::string message) {
     std::cerr << message << std::endl;

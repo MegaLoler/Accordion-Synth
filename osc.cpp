@@ -9,8 +9,8 @@ double Osc::run () {
 
     double amp_ = (min + amp * (max - min)) * env;
 
-    x += freq / rate;
     double osc = sin (x * 2 * M_PI) * amp_;
+    x += freq / rate;
     
     double position = rest + osc;
     double x_up = position + thickness / 2.0;

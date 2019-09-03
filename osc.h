@@ -34,7 +34,7 @@ class Osc {
         double high_pass = 0;
 
         double env = 0;
-        double env_smooth = 500; // bad filter lol
+        double env_smooth = 1000; // bad filter lol
         double epsilon = 0.0001;
 
         bool running = false;
