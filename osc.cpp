@@ -2,8 +2,15 @@
 #include "osc.h"
 
 double Osc::run () {
+    double t_env = on ? 1 : 0;
+    env += (t_env - env) / env_smooth;
+    if (!on && env < epsilon)
+        running = false;
+
+    double amp_ = (min + amp * (max - min)) * env;
+
     x += freq / rate;
-    double osc = sin (x * 2 * M_PI) * amp * 0.85;
+    double osc = sin (x * 2 * M_PI) * amp_;
     
     double position = rest + osc;
     double x_up = position + thickness / 2.0;
@@ -19,11 +26,24 @@ double Osc::run () {
     double tmp = clearance - osc;
     double end = (width + clearance) * sqrt (abs (x_up) + pow(tmp, 2.0));
     double tri = abs (x_up) * tmp;
-    double section = end + tri + 2 * side;
+    double section = end + tri + 2 * side * length;
 
-    double sample = section;
-    last = alpha * (last + sample - sample_last);
-    sample_last = sample;
-    lf = (last + lf * beta) / (1 + beta);
-    return lf;
+    // high pass filter
+    double sample = section * amp_;
+    high_pass = alpha * (high_pass + sample - last);
+    last = sample;
+    return high_pass * volume;
+}
+
+bool Osc::is_on () {
+    return running;
+}
+
+void Osc::start () {
+    on = true;
+    running = true;
+}
+
+void Osc::stop () {
+    on = false;
 }

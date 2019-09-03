@@ -7,6 +7,8 @@
 Synth::Synth () {
     for (int i = 0; i < 128; i++) {
         oscs[i].pan = i / 127.0 / 2 * M_PI;
+        oscs[i].freq = 440 * pow (2.0, (i - 69) / 12.0);
+        target_pressures[i] = 0;
     }
 }
 
@@ -23,32 +25,57 @@ void Synth::set_rate (double rate) {
 
 void Synth::set_pressure (double pressure) {
     this->pressure = pressure;
+
     for (int i = 0; i < 128; i++) {
         oscs[i].amp = pressure;
+        weights[i] *= weight_smoothing;
     }
 }
 
 void Synth::note_on (int note, double velocity) {
-    Osc &osc = oscs[note];
-    osc.on = true;
-    osc.freq = 440 * pow (2.0, (note - 69) / 12.0);
+    oscs[note].start ();
+    target_pressures[note] = min + (max - min) * velocity;
+    weights[note] = note * note;
+
+    // calculate new target pressure
+    double sum = 0;
+    double total = 0;
+    for (int i = 0; i < 128; i++) {
+        double pressure = target_pressures[i] * weights[i];
+        if (pressure) {
+            sum += pressure;
+            total += weights[i];
+        }
+    }
+    target_pressure = sum / total;
 }
 
 void Synth::note_off (int note) {
-    oscs[note].on = false;
+    oscs[note].stop ();
+    target_pressures[note] = 0;
+    weights[note] = 0;
 }
 
 void Synth::run (double *samples) {
-    samples[0] = samples[1] = 0;
+    if (clock++ % control_rate_division == 0) {
+        set_pressure (pressure + (target_pressure - pressure) / pressure_smoothing);
+    }
+
     double l = 0;
     double r = 0;
     for (int i = 0; i < 128; i++) {
-        if (oscs[i].on) {
-            l = r = oscs[i].run ();
-            samples[0] += cos (oscs[i].pan) * l * amp;
-            samples[1] += sin (oscs[i].pan) * r * amp;
+        if (oscs[i].is_on ()) {
+            double sample = oscs[i].run ();
+            l += cos (oscs[i].pan) * sample * amp;
+            r += sin (oscs[i].pan) * sample * amp;
         }
     }
+
+    // low pass filter
+    low_pass_left  = (l  + low_pass_left  * beta) / (1 + beta);
+    low_pass_right = (r + low_pass_right * beta) / (1 + beta);
+    samples[0] = low_pass_left;
+    samples[1] = low_pass_right;
 }
 
 void Synth::midi (uint8_t *data) {
@@ -70,7 +97,7 @@ void Synth::midi (uint8_t *data) {
             << " 0x" << std::hex << (int) value << std::endl;
 
         if (id == 0x15) {
-            set_pressure (value / 127.0);
+            target_pressure = min + (max - min) * (value / 127.0);
         }
 
     } else if (type == 0x80) {
