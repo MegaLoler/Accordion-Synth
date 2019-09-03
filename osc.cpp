@@ -32,7 +32,8 @@ double Osc::run () {
     double sample = section * amp_;
     high_pass = alpha * (high_pass + sample - last);
     last = sample;
-    high_pass = fmax (-5, fmin (5, high_pass));
+    if (abs (high_pass) > 10)
+        high_pass = last = 0;
     return high_pass * volume;
 }
 

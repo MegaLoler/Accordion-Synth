@@ -55,7 +55,7 @@ void Synth::note_on (int note, double velocity) {
 
     if (pressure_velocity) {
         target_pressures[note] = min + (max - min) * velocity;
-        weights[note] = note * note;
+        weights[note] = pow (2.0, note);
 
         // calculate new target pressure
         double sum = 0;
@@ -121,8 +121,12 @@ void Synth::run (double *samples) {
     delay_l_ = tmp_l;
     delay_r[room_center] += r;
     delay_l[room_center] += l;
-    delay_r[0] = fmax (-5, fmin (5, delay_r[0]));
-    delay_l[num_delays - 1] = fmax (-5, fmin (5, delay_l[num_delays - 1]));
+    if (abs (delay_r[room_center]) > 2 || abs (delay_l[room_center]) > 2) {
+        for (int i = 0; i < num_delays; i++) {
+            delay_r[i] = delay_r_[i] = delay_l[i] = delay_l_[i] = 0;
+        }
+        std::cerr << "Unstable!" << std::endl;
+    }
 
     // low pass filter
     low_pass_left  = (delay_r[room_center] * wet + l * dry + low_pass_left  * beta) / (1 + beta);

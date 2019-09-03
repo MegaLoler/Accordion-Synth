@@ -10,7 +10,7 @@ class Synth {
         double pressure_smoothing = 10;
         double target_pressures[128];
         double weights[128];
-        double weight_smoothing = 0.99;
+        double weight_smoothing = 0.9999;
 
         // delay line reverb
         // TODO: make this rate independant
@@ -22,19 +22,19 @@ class Synth {
         double *delay_r;
         double *delay_l_;
         double *delay_r_;
-        double wet = 0.70;
-        double dry = 0.30;
+        double wet = 0.50;
+        double dry = 0.50;
         //double wet = 0.00;
         //double dry = 1.00;
 
-        //double octave_multiplier_1 = 1;
-        //double octave_multiplier_2 = 0.5;
-        //double octave_multiplier_3 = 1;
         double octave_multiplier_1 = 1;
-        double octave_multiplier_2 = 0;
-        double octave_multiplier_3 = 0;
+        double octave_multiplier_2 = 0.5;
+        double octave_multiplier_3 = 1;
+        //double octave_multiplier_1 = 1;
+        //double octave_multiplier_2 = 0;
+        //double octave_multiplier_3 = 0;
 
-        bool pressure_velocity = false; // whether velocity controls pressure
+        bool pressure_velocity = true; // whether velocity controls pressure
 
         // pressure range
         //double max = 1.09;
