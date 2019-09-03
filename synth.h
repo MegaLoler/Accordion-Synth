@@ -27,6 +27,10 @@ class Synth {
         //double wet = 0.00;
         //double dry = 1.00;
 
+        double octave_multiplier_1 = 1;
+        double octave_multiplier_2 = 0.5;
+        double octave_multiplier_3 = 1;
+
         // pressure range
         //double max = 1.09;
         //double min = 0.88;

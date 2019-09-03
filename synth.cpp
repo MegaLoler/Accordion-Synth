@@ -7,11 +7,11 @@
 Synth::Synth () {
     for (int i = 0; i < 128; i++) {
         oscs[i].pan = (i / 127.0 - pan_sep) / 2 * M_PI;
-        oscs[i].freq = 440 * pow (2.0, ((i - detune) - 69) / 12.0);
+        oscs[i].freq = 440 * pow (2.0, ((i - detune) - 69) / 12.0) * octave_multiplier_1;
         oscs2[i].pan = (i / 127.0) / 2 * M_PI;
-        oscs2[i].freq = 440 * pow (2.0, (i - 69) / 12.0) / 2;
+        oscs2[i].freq = 440 * pow (2.0, (i - 69) / 12.0) * octave_multiplier_2;
         oscs3[i].pan = (i / 127.0 + pan_sep) / 2 * M_PI;
-        oscs3[i].freq = 440 * pow (2.0, ((i + detune) - 69) / 12.0);
+        oscs3[i].freq = 440 * pow (2.0, ((i + detune) - 69) / 12.0) * octave_multiplier_3;
         target_pressures[i] = 0;
     }
 
