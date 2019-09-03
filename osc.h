@@ -31,6 +31,15 @@ class Osc {
         double min = 0.0;
         double max = 1.3;
 
+        //double volume = 0.5;
+        //double rest = 0.2;
+        //double length = 1;
+        //double width = 1;
+        //double thickness = 0.05;
+        //double clearance = 0.05;
+        //double min = 0.0;
+        //double max = 1.2;
+
         // high pass filter
         double alpha = 0.9;     // high pass
 
