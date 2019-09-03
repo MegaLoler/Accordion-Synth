@@ -7,8 +7,8 @@
 
 Synth *synth;
 int midi_channel = -1;      // -1 = omni
-unsigned int rate = 44100;  // sampling rate
-unsigned int frames = 32;   // audio buffer
+unsigned int rate = 48000;  // sampling rate
+unsigned int frames = 256;   // audio buffer
 
 void exit_error (std::string message) {
     std::cerr << message << std::endl;
@@ -86,8 +86,11 @@ int main (int argc, char **argv) {
     parameters.nChannels = 2;
     parameters.firstChannel = 0;
 
+    RtAudio::StreamOptions options;
+    options.flags = RTAUDIO_MINIMIZE_LATENCY | RTAUDIO_SCHEDULE_REALTIME;
+
     try {
-        dac.openStream (&parameters, nullptr, RTAUDIO_FLOAT64, rate, &frames, &process_audio, nullptr);
+        dac.openStream (&parameters, nullptr, RTAUDIO_FLOAT64, rate, &frames, &process_audio, nullptr, &options);
         dac.startStream ();
     } catch (RtAudioError& e) {
         e.printMessage ();

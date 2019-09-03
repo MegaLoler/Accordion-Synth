@@ -16,13 +16,13 @@ class Synth {
         //double max = 1.09;
         //double min = 0.88;
         double max = 1;
-        double min = 0.5;
+        double min = 0;//0.5;
 
         double amp = 1;
         Osc oscs[128];    // currently playing oscillators
 
         // low pass filter
-        double beta = 2;
+        double beta = 1;
         double low_pass_left = 0;
         double low_pass_right = 0;
 
