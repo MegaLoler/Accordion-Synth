@@ -119,8 +119,8 @@ void Synth::run (double *samples) {
     delay_l = delay_l_;
     delay_r_ = tmp_r;
     delay_l_ = tmp_l;
-    delay_r[room_center] += r;
-    delay_l[room_center] += l;
+    delay_r[room_center] += l;
+    delay_l[room_center] += r;
     if (abs (delay_r[room_center]) > 2 || abs (delay_l[room_center]) > 2) {
         for (int i = 0; i < num_delays; i++) {
             delay_r[i] = delay_r_[i] = delay_l[i] = delay_l_[i] = 0;
