@@ -12,31 +12,16 @@ class Synth {
         double weights[128];
         double weight_smoothing = 0.9999;
 
-        // delay line reverb
-        // TODO: make this rate independant
-        const static int num_delays = 750;
-        const static int room_center = 80;
-        const double reflection = 0.8;
-        const double reflection_stiffness = 0.1;
-        double *delay_l;
-        double *delay_r;
-        double *delay_l_;
-        double *delay_r_;
-        double wet = 0.75;
-        double dry = 0.25;
-        //double wet = 0.50;
-        //double dry = 0.50;
-        //double wet = 0.00;
-        //double dry = 1.00;
-
         // accordion
-        //double octave_multiplier_1 = 1;
-        //double octave_multiplier_2 = 0.5;
-        //double octave_multiplier_3 = 1;
-        // melodica
         double octave_multiplier_1 = 1;
-        double octave_multiplier_2 = 0;
-        double octave_multiplier_3 = 0;
+        double octave_multiplier_2 = 0.5;
+        double octave_multiplier_3 = 1;
+        bool multi_reed = true;
+        // melodica
+        //double octave_multiplier_1 = 1;
+        //double octave_multiplier_2 = 0;
+        //double octave_multiplier_3 = 0;
+        //bool multi_reed = false;
 
         bool pressure_velocity = true; // whether velocity controls pressure
 
